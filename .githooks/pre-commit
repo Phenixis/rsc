@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Enable once per clone with scripts/install-hooks.sh.
+# Work happens on a branch, never on main: it only changes through pull requests.
+branch="$(git symbolic-ref --short -q HEAD || true)"
+case "$branch" in
+  main | master)
+    echo "pre-commit: you are on '$branch'. Create a branch first:" >&2
+    echo "            scripts/workflow.sh start <slug> [type]   (or: git switch -c <type>/<slug>)" >&2
+    exit 1
+    ;;
+esac
