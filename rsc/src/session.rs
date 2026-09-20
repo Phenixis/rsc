@@ -37,6 +37,10 @@ impl Session {
         &self.queue
     }
 
+    pub fn is_paused(&self) -> bool {
+        self.paused
+    }
+
     /// Starts playing the first track.
     pub async fn start(&mut self) -> Result<Flow> {
         self.play_current().await

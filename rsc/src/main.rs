@@ -231,6 +231,8 @@ async fn run(
                 Action::Quit => break,
                 Action::TogglePause => {
                     session.toggle_pause().await?;
+                    let state = if session.is_paused() { "⏸ paused" } else { "▶ resumed" };
+                    print_line(state, interactive);
                     Flow::Continue
                 }
                 Action::Next => session.next().await?,
