@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/readme-before-push.sh",
+            "timeout": 10,
+            "statusMessage": "Checking README.md is up to date..."
+          }
+        ]
+      }
+    ]
+  }
+}
