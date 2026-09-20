@@ -104,7 +104,9 @@ browser login are easier on the host.
 The detailed plan (in French) is in [`rsc-mvp-plan.md`](rsc-mvp-plan.md).
 
 - [x] Local backend, mpv player, queue, keyboard controls
-- [ ] OAuth login (PKCE, loopback callback, token storage and refresh)
+- [x] Login building blocks: PKCE, loopback callback, token storage, code exchange,
+      single-use refresh tokens, authenticated API client that retries once on 401
+- [ ] `rsc login` command: opens the browser, reads your app credentials from the config
 - [ ] `rsc-mock`: a fake SoundCloud server to develop and test without API access
 - [ ] Playlists from the SoundCloud API
 - [ ] Full-screen terminal UI (ratatui)
