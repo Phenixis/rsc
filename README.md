@@ -116,15 +116,15 @@ specifications are described in [`specs/`](specs/README.md).
 
 ## Roadmap
 
-The detailed plan (in French) is in [`rsc-mvp-plan.md`](rsc-mvp-plan.md).
+What is done and what comes next, in priority order, is in [`ROADMAP.md`](ROADMAP.md). The plan the
+MVP started from is [`rsc-mvp-plan.md`](rsc-mvp-plan.md) (being translated to English).
 
 - [x] Local backend, mpv player, queue, keyboard controls
 - [x] Login building blocks: PKCE, loopback callback, token storage, code exchange,
       single-use refresh tokens, authenticated API client that retries once on 401
-- [ ] `rsc login` command: opens the browser, reads your app credentials from the config
-- [ ] `rsc-mock`: a fake SoundCloud server to develop and test without API access
-- [ ] Playlists from the SoundCloud API
-- [ ] Full-screen terminal UI (ratatui)
+- [x] `rsc-mock`, slice 1: the OAuth server of a faithful fake SoundCloud API
+- [ ] Next: contributor documentation, then the rest of `rsc-mock`, `rsc login`, playlists from the
+      API, and the terminal UI
 
 ## License
 
