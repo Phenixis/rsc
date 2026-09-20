@@ -1,0 +1,23 @@
+services:
+  dev:
+    image: rsc-dev
+    build:
+      context: .
+      args:
+        UID: ${HOST_UID:-1000}
+        GID: ${HOST_GID:-1000}
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      # Registre crates.io + outils `cargo install` : évite de tout retélécharger à chaque run.
+      - cargo-home:/home/dev/.cargo
+    # Réseau de l'hôte (Linux) : le listener OAuth 127.0.0.1:8888 et le mock 127.0.0.1:9000
+    # sont alors joignables depuis le navigateur de l'hôte, sans changer le code.
+    network_mode: host
+    # init : réapère les processus enfants (mpv) et relaie correctement Ctrl-C.
+    init: true
+    tty: true
+    stdin_open: true
+
+volumes:
+  cargo-home:

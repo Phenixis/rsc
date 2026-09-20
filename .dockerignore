@@ -1,0 +1,3 @@
+# Le contexte de build ne sert qu'au Dockerfile ; le code est monté en volume.
+*
+!Dockerfile

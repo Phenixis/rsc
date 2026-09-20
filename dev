@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Point d'entrée de l'environnement de dev (tout s'exécute dans le conteneur).
+#
+#   ./dev                 shell interactif dans le conteneur
+#   ./dev image           (re)construit l'image
+#   ./dev check           fmt + clippy + tests (à lancer avant chaque commit)
+#   ./dev <commande...>   ex. ./dev cargo test, ./dev cargo run -- login
+set -euo pipefail
+cd "$(dirname "$0")"
+
+# Pour que les fichiers créés dans le conteneur vous appartiennent.
+export HOST_UID="$(id -u)" HOST_GID="$(id -g)"
+
+run() { docker compose run --rm dev "$@"; }
+
+case "${1:-}" in
+  "")    run bash ;;
+  image) docker compose build ;;
+  check) run bash -c 'cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test' ;;
+  *)     run "$@" ;;
+esac
