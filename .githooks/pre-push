@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Runs the same checks as CI before every push. Enable once per clone with
+# `scripts/install-hooks.sh`. Skip for one push with `git push --no-verify`.
+exec "$(git rev-parse --show-toplevel)/scripts/check.sh"

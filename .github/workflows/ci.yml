@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Lets a future release workflow require these checks first:
+  #   jobs:
+  #     ci:
+  #       uses: ./.github/workflows/ci.yml
+  #     release:
+  #       needs: ci
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # mpv is the player rsc drives; the end-to-end tests run the real one. No sound card
+      # is needed: they make mpv write its audio to a file and listen to that.
+      - name: Install mpv
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends mpv
+          mpv --version | head -n 1
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+
+      # fmt + clippy (warnings are errors) + all tests, missing mpv = failure
+      - name: Run checks
+        run: scripts/check.sh

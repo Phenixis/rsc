@@ -16,6 +16,6 @@ run() { docker compose run --rm dev "$@"; }
 case "${1:-}" in
   "")    run bash ;;
   image) docker compose build ;;
-  check) run bash -c 'cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test' ;;
+  check) run scripts/check.sh ;;
   *)     run "$@" ;;
 esac
