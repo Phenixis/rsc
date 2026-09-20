@@ -14,6 +14,11 @@ export RSC_REQUIRE_E2E=1
 
 command -v mpv >/dev/null || { echo "check: mpv is required to run the end-to-end tests" >&2; exit 1; }
 
+# The mock's contract tests compare its answers with SoundCloud's official OpenAPI description.
+# Offline, they fail with a clear message rather than pass silently (RSC_REQUIRE_E2E=1).
+scripts/fetch-openapi.sh || echo "check: could not download the SoundCloud OpenAPI description" >&2
+
+scripts/test-agent-guard.sh
 cargo fmt --check
 cargo clippy --all-targets -- -D warnings
 cargo test
