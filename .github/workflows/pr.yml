@@ -1,0 +1,49 @@
+name: Pull request
+
+# Every change reaches main through a pull request that states its scope (see CONTRIBUTING.md).
+# This job checks the title, the branch name and the description; the CI workflow runs the code checks.
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  pull-request:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Title, branch and description follow the contribution rules
+        env:
+          # Passed through the environment, never interpolated into the script.
+          TITLE: ${{ github.event.pull_request.title }}
+          BODY: ${{ github.event.pull_request.body }}
+          BRANCH: ${{ github.head_ref }}
+          FORK: ${{ github.event.pull_request.head.repo.fork }}
+        run: |
+          set -uo pipefail
+          types='feat|fix|docs|test|refactor|chore|ci|build|perf'
+          errors=0
+          fail() { echo "::error::$1"; errors=$((errors + 1)); }
+
+          # "type: summary" or "type(scope): summary", at most 72 characters: it becomes the commit on main.
+          if ! [[ "$TITLE" =~ ^($types)(\([a-z0-9-]+\))?!?:\ .{6,}$ ]] || [ "${#TITLE}" -gt 72 ]; then
+            fail "The title must look like 'type: imperative summary' (types: ${types//|/, }), at most 72 characters. Got: $TITLE"
+          fi
+
+          # Branches of this repository are <type>/<slug>. Forks are free to name theirs.
+          if [ "$FORK" != "true" ] && ! [[ "$BRANCH" =~ ^($types)/[a-z0-9][a-z0-9-]*$ ]]; then
+            fail "The branch must be named '<type>/<slug>' (lowercase, digits and hyphens). Got: $BRANCH"
+          fi
+
+          # The description states the scope: the template's sections must be there and filled.
+          for section in "Goal" "Out of scope" "Test plan"; do
+            content="$(printf '%s\n' "$BODY" | awk -v h="## $section" '$0 == h { on = 1; next } /^## / { on = 0 } on' | tr -d '[:space:]')"
+            if [ -z "$content" ]; then
+              fail "The description needs a filled '## $section' section (see .github/pull_request_template.md)."
+            fi
+          done
+
+          [ "$errors" -eq 0 ] && echo "The pull request follows the contribution rules."
+          [ "$errors" -eq 0 ]

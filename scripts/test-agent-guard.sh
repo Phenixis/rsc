@@ -17,8 +17,14 @@ touch "$root"/rsc/src/foo.rs "$root"/rsc/src/foo/tests.rs "$root"/rsc/src/test_s
 ln -s "$root/rsc/src/foo/tests.rs" "$root/rsc/src/innocent.rs"
 ln -s "$root/rsc/src/foo.rs" "$root/specs/link.md"
 
-set_state() { # feature, status  (empty feature = no active workflow)
-  if [[ -n "$1" ]]; then echo "$1" >"$root/.workflow/current"; echo "$2" >"$root/.workflow/$1/status"; else rm -f "$root/.workflow/current"; fi
+set_state() { # feature, status, [scope: true|false]  (empty feature = no active workflow)
+  if [[ -n "$1" ]]; then
+    echo "$1" >"$root/.workflow/current"
+    echo "$2" >"$root/.workflow/$1/status"
+    printf -- '---\nfeature: %s\nconfirmed: %s\n---\n' "$1" "${3:-true}" >"$root/.workflow/$1/scope.md"
+  else
+    rm -f "$root/.workflow/current"
+  fi
 }
 
 total=0
@@ -63,6 +69,23 @@ block spec "runs a shell command"             "$(bash_call 'cargo test')"
 allow spec "reads app code"                   "$(file_call Read rsc/src/foo.rs)"
 allow spec "reads tests"                      "$(file_call Read rsc/src/foo/tests.rs)"
 allow spec "greps"                            "$(tool_call Grep)"
+
+# The scope of the pull request must have been agreed with the user before SPEC writes anything
+set_state x scope false
+block spec "writes a spec before the scope is confirmed"  "$(write_call specs/x.md)"
+block spec "writes a test before the scope is confirmed"  "$(write_call rsc/src/foo/tests.rs)"
+allow spec "can still read before the scope is confirmed" "$(file_call Read specs/x.md)"
+set_state x spec
+allow spec "writes a spec once the scope is confirmed"    "$(write_call specs/x.md)"
+block spec "rewrites the scope contract"                  "$(write_call .workflow/x/scope.md)"
+block spec "writes a draft scope"                         "$(write_call .workflow/drafts/x.md)"
+set_state x red
+block dev  "rewrites the scope contract"                  "$(write_call .workflow/x/scope.md)"
+block dev  "writes a draft scope"                         "$(write_call .workflow/drafts/x.md)"
+block test "rewrites the scope contract"                  "$(write_call .workflow/x/scope.md)"
+block test "writes a draft scope"                         "$(write_call .workflow/drafts/x.md)"
+allow dev  "reads the scope"                              "$(file_call Read .workflow/x/scope.md)"
+block dev  "runs the workflow script"                     "$(bash_call 'scripts/workflow.sh status')"
 
 # ---------------------------------------------------------------- DEV (feature x, status red)
 set_state x red
@@ -166,6 +189,10 @@ allow test "cargo test piped to grep"         "$(bash_call 'cargo test | grep FA
 allow test "cargo clippy --all-targets"       "$(bash_call 'cargo clippy --all-targets -- -D warnings')"
 allow test "cargo fmt --check"                "$(bash_call 'cargo fmt --check')"
 allow test "cargo mutants"                    "$(bash_call 'cargo mutants --package rsc-mock')"
+allow test "workflow status"                  "$(bash_call 'scripts/workflow.sh status')"
+allow test "workflow scope-check"             "$(bash_call 'scripts/workflow.sh scope-check')"
+block test "workflow init"                    "$(bash_call 'scripts/workflow.sh init x feat --user-confirmed')"
+block test "workflow pr"                      "$(bash_call 'scripts/workflow.sh pr')"
 allow test "scripts/check.sh"                 "$(bash_call 'scripts/check.sh')"
 allow test "git diff"                         "$(bash_call 'git diff --stat')"
 allow test "git status"                       "$(bash_call 'git status --short')"

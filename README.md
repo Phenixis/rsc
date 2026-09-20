@@ -69,7 +69,7 @@ rsc will use the official SoundCloud API, so it follows the
 ```bash
 cargo test                # everything below
 scripts/check.sh          # what CI runs: fmt + clippy (warnings are errors) + all tests
-scripts/install-hooks.sh  # optional: run scripts/check.sh before every `git push`
+scripts/install-hooks.sh  # blocks commits on main and pushes to it; runs scripts/check.sh before a push
 ```
 
 The test suite has three layers:
@@ -99,9 +99,15 @@ rather not install a toolchain: `./dev` opens a shell, `./dev cargo test` runs
 a command, `./dev check` runs `scripts/check.sh`. Real audio output and the
 browser login are easier on the host.
 
+## Contributing
+
+`main` only changes through pull requests, squash-merged, one scope each: see
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 ## AI-assisted development
 
-New features can be built by three Claude Code subagents with separated powers, so that
+A change starts with `/grill-scope`, an interview that settles the scope of the pull request.
+New features can then be built by three Claude Code subagents with separated powers, so that
 the tests stay honest: **SPEC** writes the specification and the tests but no application
 code, **DEV** writes the code but can neither read nor change the tests, and **TEST** runs
 everything and reports failures to DEV. Hooks enforce these rules and are themselves tested

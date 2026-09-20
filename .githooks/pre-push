@@ -1,4 +1,19 @@
 #!/usr/bin/env bash
-# Runs the same checks as CI before every push. Enable once per clone with
-# `scripts/install-hooks.sh`. Skip for one push with `git push --no-verify`.
+# Enable once per clone with scripts/install-hooks.sh. Skip for one push with --no-verify
+# (agents are not allowed to; see .claude/hooks/pr-guard.sh).
+#
+# 1. main only changes through pull requests: refuse any push that updates or deletes it.
+# 2. Run the same checks as CI (scripts/check.sh).
+set -euo pipefail
+
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main | refs/heads/master)
+      echo "pre-push: refusing to push to ${remote_ref#refs/heads/}: it only changes through pull requests." >&2
+      echo "          Work on a branch and open a PR (see CONTRIBUTING.md, scripts/workflow.sh)." >&2
+      exit 1
+      ;;
+  esac
+done
+
 exec "$(git rev-parse --show-toplevel)/scripts/check.sh"

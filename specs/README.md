@@ -6,9 +6,10 @@ writes the code cannot see or edit the tests, so it has to build what the specif
 
 | Agent | Writes | Reads | Runs |
 |---|---|---|---|
-| `rsc-spec` | `specs/*.md`, test files | everything | nothing |
+| `rsc-scout` | nothing | everything (Read, Grep, Glob) | nothing; used by `/grill-scope` to look facts up |
+| `rsc-spec` | `specs/*.md`, test files (once the scope is confirmed) | everything | nothing |
 | `rsc-dev` | application code, `questions.md` | everything except tests | `scripts/cargo.sh build/check/clippy/add/...` (a `cargo` with a working PATH) |
-| `rsc-test` | its report and the status | everything | `scripts/cargo.sh test/clippy/fmt --check/mutants`, read-only git |
+| `rsc-test` | its notes and the status | everything | `scripts/cargo.sh test/clippy/fmt --check/mutants`, read-only git |
 
 Test files are: `tests.rs`, anything under `tests/`, `test_support.rs`, `fixtures/`,
 `testdata/`. Unit tests live in `<module>/tests.rs` (declared with `#[cfg(test)] mod tests;`),
@@ -18,21 +19,36 @@ The rules are enforced by hooks declared in each agent (`.claude/hooks/agent-gua
 tested by `scripts/test-agent-guard.sh`. They are guardrails against an agent drifting, not a
 sandbox against an adversary.
 
-## The loop
+## The loop (one feature = one branch = one pull request)
 
-1. **Orchestrator**: `scripts/workflow.sh start <feature>` (slug: lowercase, digits, hyphens).
-2. **SPEC** writes `specs/<feature>.md` and the tests. *A human reviews both.*
-3. **TEST** checks that the tests exist and fail, and sets the status to `red`.
+`main` only changes through pull requests (see `CONTRIBUTING.md`); each pull request is squash-merged.
+
+0. **Scope**: the orchestrator runs `/grill-scope` (a skill, because it must converse with the
+   human): it interviews the user round by round, looks facts up through the read-only `rsc-scout`
+   sub-agent, proposes to split work that is too big, and writes a scope summary to
+   `.workflow/drafts/<slug>.md`. After the user's explicit yes, the orchestrator runs
+   `scripts/workflow.sh init <slug> <type> --user-confirmed`: the only way to begin. It validates
+   the summary, creates the branch `<type>/<slug>` from `origin/main`, and confirms the scope
+   (`.workflow/<slug>/scope.md`: goal, in/out of scope, acceptance, follow-ups, allowed `paths`,
+   size budget). Agents cannot write or change it, and SPEC cannot write anything before it exists.
+1. **SPEC** writes `specs/<feature>.md` and the tests, inside the scope. *A human reviews both.*
+2. **TEST** checks that the tests exist and fail, and sets the status to `red`.
    DEV cannot write anything before that.
-4. **DEV** implements from the spec. Questions go to `.workflow/<feature>/questions.md`.
-5. **TEST** runs everything and writes `.workflow/<feature>/dev-notes.md` for DEV
-   and `spec-notes.md` for SPEC. Status `red` or `green`.
-6. `red`: back to 4 (at most 5 rounds, then ask a human). Notes for SPEC lead to test and spec
-   changes, which restart from 3.
-7. `green`: the orchestrator runs `cargo fmt`, `scripts/check.sh`, and commits.
+3. **DEV** implements from the spec. Questions go to `.workflow/<feature>/questions.md`.
+4. **TEST** runs everything, checks `scripts/workflow.sh scope-check` (drift), and writes
+   `.workflow/<feature>/dev-notes.md` for DEV and `spec-notes.md` for SPEC. Status `red` or `green`.
+5. `red`: back to 3 (at most 5 rounds, then ask a human). Notes for SPEC lead to test and spec
+   changes, which restart from 2.
+6. `green`: the orchestrator runs `cargo fmt` and `scripts/check.sh`, commits on the branch in
+   logical commits, and runs `scripts/workflow.sh pr`, which checks the scope, pushes the branch and
+   opens the pull request from the scope contract. Anything discovered on the way and out of scope
+   becomes a follow-up, not more changes.
 
-`.workflow/` (current feature, status, reports) is local state and is not committed.
-`specs/` is committed: it is the living documentation of each feature.
+Changes that do not alter behavior (docs, CI, chores) skip steps 1 to 5 but not step 0 or the pull request.
+
+`.workflow/` (drafts, current feature, scope, status, notes) is local state and is not committed.
+`specs/` is committed: it is the living documentation of each feature. The scope of each pull
+request lives on in its description.
 
 ## Spec conventions
 

@@ -6,6 +6,12 @@
         "hooks": [
           {
             "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pr-guard.sh",
+            "timeout": 10,
+            "statusMessage": "Checking that main only changes through pull requests..."
+          },
+          {
+            "type": "command",
             "if": "Bash(git push*)",
             "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/readme-before-push.sh",
             "timeout": 10,

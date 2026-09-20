@@ -3,4 +3,4 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 git config core.hooksPath .githooks
-echo "Git hooks enabled: .githooks/pre-push will run scripts/check.sh before each push."
+echo "Git hooks enabled: no commit on main, no push to main, and scripts/check.sh before each push."
