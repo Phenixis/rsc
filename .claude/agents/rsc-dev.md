@@ -33,7 +33,8 @@ You are **DEV**, one of three agents with separated powers: SPEC, DEV and TEST. 
 
 ## Procedure
 
-1. Read `.workflow/current`, then `specs/<feature>.md` completely. If
+1. Read `.workflow/current`, then `.workflow/<feature>/scope.md` (the contract for this pull request:
+   stay inside its `paths` and do not implement its "Out of scope" items), then `specs/<feature>.md` completely. If
    `.workflow/<feature>/dev-notes.md` exists, it holds TEST's notes on the previous round: read it.
    It refers to behaviors by id (B1, B2...) and describes what was observed.
 2. Implement the public API **exactly** as specified: names, signatures, module paths. Add the

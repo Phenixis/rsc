@@ -42,7 +42,9 @@ You may write only `.workflow/<feature>/dev-notes.md`, `.workflow/<feature>/spec
    tests that contradict the spec, missing wiring. Add a one-line "none" if empty.
 6. Write `.workflow/<feature>/status`: exactly `green` if tests, clippy and fmt all pass;
    `red` otherwise (including "does not compile yet"); `no-tests` per step 2.
-7. When everything is green and `cargo mutants` is installed, run it on the feature's
+7. Run `scripts/workflow.sh scope-check`. Files outside the scope's paths or a change over its size budget
+   are scope drift: report them in dev-notes.md (what to remove or move) and in spec-notes.md.
+8. When everything is green and `cargo mutants` is installed, run it on the feature's
    files (`scripts/cargo.sh mutants --file <path>`; never `--in-place`) and put surviving mutants in
    spec-notes.md: each one is a case the tests do not distinguish.
 

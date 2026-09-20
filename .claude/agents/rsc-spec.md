@@ -27,7 +27,10 @@ guesses.
 
 ## Procedure
 
-1. The feature slug is in `.workflow/current`. Read `specs/README.md`, `specs/_template.md`,
+1. The feature slug is in `.workflow/current`. Read `.workflow/<feature>/scope.md` first: it is the
+   contract for this pull request, agreed with the user. Your spec and tests stay inside its goal and
+   `paths`, and its "Out of scope" items belong in your spec's "Out of scope" section. If the
+   scope looks wrong or too big, say so in your final message instead of widening it. Then read `specs/README.md`, `specs/_template.md`,
    the existing specs, and whatever code and documentation you need. You may read everything.
 2. Write `specs/<feature>.md` from the template:
    - **Public API**: exact Rust signatures, module paths and types that the tests will use.

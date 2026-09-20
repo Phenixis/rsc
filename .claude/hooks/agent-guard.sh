@@ -47,6 +47,12 @@ is_test_path() {
 feature="$(tr -d '[:space:]' 2>/dev/null <"$root/.workflow/current" || true)"
 has_feature() { [[ "$feature" =~ ^[a-z0-9][a-z0-9-]*$ ]]; }
 feature_status() { tr -d '[:space:]' 2>/dev/null <"$root/.workflow/$feature/status" || echo none; }
+# The user agreed to the scope of this pull request (scripts/workflow.sh init sets it; no agent can).
+scope_confirmed() { grep -qE '^confirmed:[[:space:]]*true[[:space:]]*$' "$root/.workflow/$feature/scope.md" 2>/dev/null; }
+require_scope() {
+  has_feature && scope_confirmed && return 0
+  deny "the scope of this pull request is not confirmed: the orchestrator must run /grill-scope with the user, then scripts/workflow.sh init, before any spec or test is written."
+}
 
 # --- shell commands ----------------------------------------------------------------------------
 
@@ -70,9 +76,9 @@ guard_spec() {
       local r
       r="$(rel_path "$(field '.tool_input.file_path // .tool_input.notebook_path')")"
       [[ -n "$r" ]] || deny "refusing to write outside the repository"
-      case "$r" in specs/*) exit 0 ;; esac
-      is_test_path "$r" && exit 0
-      has_feature && [[ "$r" == ".workflow/$feature/answers.md" ]] && exit 0
+      case "$r" in specs/*) require_scope; exit 0 ;; esac
+      is_test_path "$r" && { require_scope; exit 0; }
+      has_feature && [[ "$r" == ".workflow/$feature/answers.md" ]] && { require_scope; exit 0; }
       deny "SPEC may only write specs/ and test files (tests.rs, tests/, test_support.rs, fixtures/), not '$r'. Application code is DEV's job."
       ;;
     Bash) deny "SPEC has no shell: it cannot compile or run anything. TEST does that." ;;
@@ -164,8 +170,8 @@ guard_test() {
         seg="${seg%"${seg##*[![:space:]]}"}"
         if ((first)); then
           first=0
-          [[ "$seg" =~ ^(RSC_REQUIRE_E2E=[01]\ )?(cargo\ (test|clippy|check|build|tree|mutants|fmt)|scripts/check\.sh|scripts/test-agent-guard\.sh|git\ (status|diff|log|show|ls-files|rev-parse|blame))$ARGS$ ]] ||
-            deny "TEST may run cargo test|clippy|check|build|tree|mutants|fmt --check, scripts/check.sh, and read-only git."
+          [[ "$seg" =~ ^(RSC_REQUIRE_E2E=[01]\ )?(cargo\ (test|clippy|check|build|tree|mutants|fmt)|scripts/check\.sh|scripts/test-agent-guard\.sh|scripts/workflow\.sh\ (status|scope-check)|git\ (status|diff|log|show|ls-files|rev-parse|blame))$ARGS$ ]] ||
+            deny "TEST may run cargo test|clippy|check|build|tree|mutants|fmt --check, scripts/check.sh, scripts/workflow.sh status|scope-check, and read-only git."
           [[ "$seg" != *"cargo fmt"* || "$seg" == *"--check"* ]] || deny "TEST does not format files: use cargo fmt --check."
           [[ "$seg" != *"--in-place"* ]] || deny "cargo mutants --in-place would modify the sources."
         else
