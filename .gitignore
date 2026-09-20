@@ -19,3 +19,9 @@ target
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# SPEC/DEV/TEST pipeline: local state
+.workflow/
+
+# Downloaded reference material (SoundCloud OpenAPI spec, pinned by scripts/fetch-openapi.sh)
+.cache/

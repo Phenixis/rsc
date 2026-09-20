@@ -99,6 +99,15 @@ rather not install a toolchain: `./dev` opens a shell, `./dev cargo test` runs
 a command, `./dev check` runs `scripts/check.sh`. Real audio output and the
 browser login are easier on the host.
 
+## AI-assisted development
+
+New features can be built by three Claude Code subagents with separated powers, so that
+the tests stay honest: **SPEC** writes the specification and the tests but no application
+code, **DEV** writes the code but can neither read nor change the tests, and **TEST** runs
+everything and reports failures to DEV. Hooks enforce these rules and are themselves tested
+(`scripts/test-agent-guard.sh`). The workflow, the file conventions and the living
+specifications are described in [`specs/`](specs/README.md).
+
 ## Roadmap
 
 The detailed plan (in French) is in [`rsc-mvp-plan.md`](rsc-mvp-plan.md).
