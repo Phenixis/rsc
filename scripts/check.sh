@@ -19,6 +19,8 @@ command -v mpv >/dev/null || { echo "check: mpv is required to run the end-to-en
 scripts/fetch-openapi.sh || echo "check: could not download the SoundCloud OpenAPI description" >&2
 
 scripts/test-agent-guard.sh
+scripts/test-pr-guard.sh
+scripts/test-workflow.sh
 cargo fmt --check
 cargo clippy --all-targets -- -D warnings
 cargo test
