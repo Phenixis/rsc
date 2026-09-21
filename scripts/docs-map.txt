@@ -1,0 +1,30 @@
+# Which documents a pull request must update, or at least review, before it is pushed.
+# Read by scripts/check-docs.sh, which compares the whole branch with origin/main.
+#
+# One rule per line:
+#   always => DOC              every pull request
+#   changed:GLOB => DOC        a file matching GLOB is added, modified, deleted or renamed
+#   structure:GLOB => DOC      a file matching GLOB is added, deleted or renamed (not modified)
+# GLOB is a shell pattern where * also matches "/". A leading "!" negates it (!*.md is "not
+# Markdown"). DOC is a path from the root of the repository. "#" starts a comment.
+#
+# When a rule triggers, DOC must be modified by the branch, or marked as reviewed with
+# scripts/docs-reviewed.sh. Keep the rules narrow: a check that fires all the time gets ignored.
+
+always => README.md
+changed:!*.md => ROADMAP.md
+
+# New, removed or moved files change the map of the code that docs/architecture.md draws.
+structure:rsc/src/* => docs/architecture.md
+structure:rsc-mock/src/* => docs/architecture.md
+changed:Cargo.toml => docs/architecture.md
+
+# Where tokens are stored and where the mpv socket is driven.
+changed:rsc/src/auth/* => SECURITY.md
+changed:rsc/src/player/mpv.rs => SECURITY.md
+
+# How to work on the project.
+changed:.githooks/* => CONTRIBUTING.md
+changed:scripts/* => CONTRIBUTING.md
+changed:.github/workflows/* => CONTRIBUTING.md
+changed:.claude/* => CONTRIBUTING.md

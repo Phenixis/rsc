@@ -46,6 +46,15 @@ scripts/install-hooks.sh   # blocks commits on main and pushes to it, and runs s
 `scripts/check.sh` is what CI runs; run it before you push. `git commit --no-verify` and
 `git push --no-verify` exist, but the point of the hooks is that you do not need them.
 
+### Keeping the documentation up to date
+
+Before a push, `scripts/check-docs.sh` (run by the pre-push hook, and by the Claude Code hook) checks
+that the pull request updates the documents its changes affect: for example a new file under
+`rsc/src/` calls for `docs/architecture.md`, and a change to `scripts/` for this file. The rules are in
+[`scripts/docs-map.txt`](scripts/docs-map.txt); widening them is a small pull request. When a document
+is already accurate, say so with `scripts/docs-reviewed.sh README.md`: the record holds for the
+current commit only.
+
 ## Working with Claude Code
 
 The repository ships agents and hooks (see [`specs/README.md`](specs/README.md)):

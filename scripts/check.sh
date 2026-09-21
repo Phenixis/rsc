@@ -21,6 +21,7 @@ scripts/fetch-openapi.sh || echo "check: could not download the SoundCloud OpenA
 scripts/test-agent-guard.sh
 scripts/test-pr-guard.sh
 scripts/test-workflow.sh
+scripts/test-docs-check.sh
 cargo fmt --check
 cargo clippy --all-targets -- -D warnings
 cargo test
