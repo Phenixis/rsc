@@ -33,6 +33,10 @@ each with an explicit title.
 Keep your branch up to date by rebasing on `main`, not by merging `main` into it. Use
 `git push --force-with-lease` on your own branch when you do.
 
+## Finding your way around
+
+[`docs/architecture.md`](docs/architecture.md) explains the crates, the modules and the login flow.
+
 ## Setting up your clone
 
 ```bash

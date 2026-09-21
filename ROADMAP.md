@@ -26,8 +26,8 @@ Do this before adding features: it is the cheapest way to get other people invol
    feature request), so GitHub's community checklist is complete.~~ Done.
 3. **Starter issues** (`chore`): turn the items of this roadmap into GitHub issues, and label a few
    `good first issue` with a clear scope and acceptance criteria.
-4. **Architecture overview** (`docs`): one short page on the crates and modules, the login flow, and
-   how `rsc` talks to `rsc-mock`.
+4. ~~**Architecture overview** (`docs`): one short page on the crates and modules, the login flow, and
+   how `rsc` talks to `rsc-mock`.~~ Done: [`docs/architecture.md`](docs/architecture.md).
 5. **English everywhere** (`docs`): translate `rsc-mvp-plan.md`, and the French comments in
    `Dockerfile`, `compose.yaml` and the `dev` script.
 
