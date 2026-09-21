@@ -1,0 +1,48 @@
+name: Bug report
+description: Something does not work as it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. If it is a security problem (a leaked token, a
+        way to control the player), do not use this form: follow the
+        [security policy](https://github.com/Phenixis/rsc/security/policy).
+
+        **Never paste tokens, your `client_secret` or the contents of `tokens.json`.**
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you saw, and the exact error message if there is one.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: The commands you ran, in order. If it happens against `rsc-mock`, say so.
+      render: shell
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Commit
+      description: The output of `git rev-parse --short HEAD` in your clone.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Your OS, the output of `mpv --version | head -1`, and `rustc --version`.
+      render: text
+    validations:
+      required: false

@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest something rsc should do.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before you write, have a look at the [roadmap](https://github.com/Phenixis/rsc/blob/main/ROADMAP.md):
+        the idea may already be planned. Features that the SoundCloud API terms do not allow will
+        not be added.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do that rsc does not let you do today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like
+      description: How it would work from your point of view, as a user of the terminal.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+    validations:
+      required: false
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Would you like to work on it?
+      description: See CONTRIBUTING.md. A pull request starts with a small agreed scope.
+      options:
+        - "Yes"
+        - "Maybe, with some guidance"
+        - "No, I only suggest it"
+    validations:
+      required: true

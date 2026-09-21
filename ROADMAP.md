@@ -22,8 +22,8 @@ Do this before adding features: it is the cheapest way to get other people invol
 1. **README up to date** (`docs`): correct the roadmap, say what `rsc-mock` is and why it exists,
    explain how to develop without credentials, and make it clear that contributing does not
    require Claude Code.
-2. **Community files** (`docs`): `SECURITY.md`, a code of conduct, issue templates (bug report,
-   feature request), so GitHub's community checklist is complete.
+2. ~~**Community files** (`docs`): `SECURITY.md`, a code of conduct, issue templates (bug report,
+   feature request), so GitHub's community checklist is complete.~~ Done.
 3. **Starter issues** (`chore`): turn the items of this roadmap into GitHub issues, and label a few
    `good first issue` with a clear scope and acceptance criteria.
 4. **Architecture overview** (`docs`): one short page on the crates and modules, the login flow, and
