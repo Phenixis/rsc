@@ -1,5 +1,8 @@
 # Contributing
 
+Everyone taking part in the project follows the [code of conduct](CODE_OF_CONDUCT.md). To report
+a vulnerability, follow the [security policy](SECURITY.md) and do not open a public issue.
+
 `main` only changes through pull requests. Nobody pushes to it directly, administrators
 included: a repository ruleset enforces it, and local hooks stop you earlier. Each pull request
 is squash-merged, so `main` reads as one commit per pull request, in the order they were merged,

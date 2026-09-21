@@ -102,7 +102,9 @@ browser login are easier on the host.
 ## Contributing
 
 `main` only changes through pull requests, squash-merged, one scope each: see
-[`CONTRIBUTING.md`](CONTRIBUTING.md).
+[`CONTRIBUTING.md`](CONTRIBUTING.md). Everyone taking part follows the
+[code of conduct](CODE_OF_CONDUCT.md); to report a vulnerability, see the
+[security policy](SECURITY.md) instead of opening a public issue.
 
 ## AI-assisted development
 
