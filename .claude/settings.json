@@ -13,9 +13,9 @@
           {
             "type": "command",
             "if": "Bash(git push*)",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/readme-before-push.sh",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/docs-before-push.sh",
             "timeout": 10,
-            "statusMessage": "Checking README.md is up to date..."
+            "statusMessage": "Checking the documentation is up to date..."
           }
         ]
       }

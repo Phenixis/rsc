@@ -3,10 +3,12 @@
 # (agents are not allowed to; see .claude/hooks/pr-guard.sh).
 #
 # 1. main only changes through pull requests: refuse any push that updates or deletes it.
-# 2. Run the same checks as CI (scripts/check.sh).
+# 2. The documentation must be up to date (scripts/check-docs.sh, rules in scripts/docs-map.txt).
+# 3. Run the same checks as CI (scripts/check.sh).
 set -euo pipefail
 
-while read -r _local_ref _local_sha remote_ref _remote_sha; do
+pushes_something=0
+while read -r _local_ref local_sha remote_ref _remote_sha; do
   case "$remote_ref" in
     refs/heads/main | refs/heads/master)
       echo "pre-push: refusing to push to ${remote_ref#refs/heads/}: it only changes through pull requests." >&2
@@ -14,6 +16,13 @@ while read -r _local_ref _local_sha remote_ref _remote_sha; do
       exit 1
       ;;
   esac
+  # An all-zero sha is the deletion of a remote branch: nothing to document.
+  [[ "$local_sha" =~ ^0+$ ]] || pushes_something=1
 done
 
-exec "$(git rev-parse --show-toplevel)/scripts/check.sh"
+root="$(git rev-parse --show-toplevel)"
+if ((pushes_something)); then
+  "$root/scripts/check-docs.sh"
+fi
+
+exec "$root/scripts/check.sh"

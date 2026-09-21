@@ -75,6 +75,9 @@ scripts/check.sh          # what CI runs: fmt + clippy (warnings are errors) + a
 scripts/install-hooks.sh  # blocks commits on main and pushes to it; runs scripts/check.sh before a push
 ```
 
+Before a push, `scripts/check-docs.sh` also checks that the documents your changes affect were updated
+(see [`CONTRIBUTING.md`](CONTRIBUTING.md#keeping-the-documentation-up-to-date)).
+
 The test suite has three layers:
 
 - **Unit and component tests** (`src/`, `tests/session.rs`): pure logic, fake backend
