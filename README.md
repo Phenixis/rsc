@@ -66,6 +66,9 @@ rsc will use the official SoundCloud API, so it follows the
 
 ## Development
 
+New here? [`docs/architecture.md`](docs/architecture.md) is a short tour of the crates, the modules
+and the login flow.
+
 ```bash
 cargo test                # everything below
 scripts/check.sh          # what CI runs: fmt + clippy (warnings are errors) + all tests
